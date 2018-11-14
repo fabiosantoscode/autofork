@@ -1,0 +1,35 @@
+{
+  "name": "autofork",
+  "version": "1.0.0",
+  "description": "Create a git mirror of another project with your own additions to it",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prepare": "tsc --build",
+    "test": "npm run prepare --silent && istanbul cover ./node_modules/.bin/_mocha",
+    "precommit": "npm run lint --silent && npm run test --silent",
+    "lint": "tslint --fix 'src/**/*.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fabiosantoscode/autofork.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fabiosantoscode/autofork/issues"
+  },
+  "homepage": "https://github.com/fabiosantoscode/autofork#readme",
+  "devDependencies": {
+    "coveralls": "^3.0.2",
+    "husky": "^1.1.4",
+    "istanbul": "^1.1.0-alpha.1",
+    "mocha": "^3.5.3",
+    "tslint": "^5.11.0",
+    "tslint-config-standard": "^8.0.1"
+  },
+  "dependencies": {
+    "is-url": "^1.2.4",
+    "shell-escape": "^0.2.0"
+  }
+}

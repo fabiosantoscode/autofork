@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "lib": ["es6"],
+    "module": "commonjs",
+    "allowJs": false,
+    "alwaysStrict": true,
+    "declaration": true,
+    "importHelpers": true,
+    "moduleResolution": "classic",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "target": "esnext"
+  },
+  "include": [
+    "./src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
