@@ -3,7 +3,6 @@ const path = require('path')
 const { spawn } = require('child_process')
 const isUrl = require('is-url')
 const os = require('os')
-const rimraf = require('rimraf')
 const shellescape = require('shell-escape')
 
 const spawnPromise = (cmd: string, ...args: string[]) => spawnPromiseOptions({}, cmd, ...args)
@@ -33,12 +32,6 @@ const possiblyFetch = async (repo: string) => {
   return repo
 }
 
-const possiblyRemove = async (repo: string, originalRepo: string) => {
-  if (isAUrl(originalRepo)) {
-    await new Promise(resolve => { rimraf(repo, resolve) })
-  }
-}
-
 module.exports = async (
   originalRepo: string,
   originalFork: string,
@@ -59,8 +52,7 @@ module.exports = async (
     await spawnPromiseOptions({ cwd: fork }, 'git', 'push')
   }
 
-  possiblyRemove(repo, originalRepo)
-  possiblyRemove(fork, originalFork)
+  return { repo, fork }
 }
 
 module.exports.maintain = async (
@@ -82,6 +74,5 @@ module.exports.maintain = async (
     await spawnPromiseOptions({ cwd: fork }, 'git', 'push', '-f')
   }
 
-  possiblyRemove(repo, originalRepo)
-  possiblyRemove(fork, originalFork)
+  return { repo, fork }
 }
