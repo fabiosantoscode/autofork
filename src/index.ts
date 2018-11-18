@@ -77,6 +77,8 @@ module.exports.maintain = async (
     return module.exports(repo, fork, { diff })
   }
 
+  await spawnPromiseOptions({ cwd: fork }, 'git', 'config', 'user.name', 'Autofork')
+  await spawnPromiseOptions({ cwd: fork }, 'git', 'config', 'user.email', 'autofork@example.com')
   await spawnPromiseOptions({ cwd: fork }, 'git', 'remote', 'add', 'foo', path.relative(fork, repo))
   await spawnPromiseOptions({ cwd: fork }, 'git', 'fetch', 'foo')
   await spawnPromiseOptions({ cwd: fork }, 'git', 'rebase', 'foo/master')
