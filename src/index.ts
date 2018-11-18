@@ -1,4 +1,4 @@
-const fs = require('fs').promises
+const fs = require('fs')
 const path = require('path')
 const { spawn } = require('child_process')
 const isUrl = require('is-url')
@@ -23,9 +23,20 @@ const spawnPromiseOptions = (opt: any, cmd: string, ...args: string[]) => new Pr
 
 const isAUrl = (url: string) => isUrl(url) || /[@:]/.test(url)
 
+const promisify = method => (...args: any[]) => new Promise((resolve, reject) => {
+  method(...args, (e, s) => {
+    if (e) reject(e)
+    else resolve(s)
+  })
+})
+
+const stat = promisify(fs.stat)
+const mkdtemp = promisify(fs.mkdtemp)
+const writeFile = promisify(fs.writeFile)
+
 const possiblyFetch = async (repo: string) => {
   if (isAUrl(repo)) {
-    const repoTmp = await fs.mkdtemp(os.tmpdir() + '/')
+    const repoTmp = await mkdtemp(os.tmpdir() + '/') as string
     await spawnPromise('git', 'clone', repo, repoTmp)
     return repoTmp
   }
@@ -39,12 +50,12 @@ module.exports = async (
 ) => {
   const repo = await possiblyFetch(originalRepo)
   const fork = await possiblyFetch(originalFork)
-  if (!await fs.stat(fork).catch(() => null)) {
+  if (!await stat(fork).catch(() => null)) {
     await spawnPromise('cp', '-r', repo, fork)
   }
 
   const filename = path.join(fork, '.diff')
-  await fs.writeFile(filename, diff)
+  await writeFile(filename, diff)
   await spawnPromiseOptions({ cwd: fork }, 'git', 'apply', '.diff')
   await spawnPromiseOptions({ cwd: fork }, 'git', 'commit', '-am', 'fork patch')
 
@@ -62,7 +73,7 @@ module.exports.maintain = async (
 ) => {
   const repo = await possiblyFetch(originalRepo)
   const fork = await possiblyFetch(originalFork)
-  if (!await fs.stat(fork).catch(() => null)) {
+  if (!await stat(fork).catch(() => null)) {
     return module.exports(repo, fork, { diff })
   }
 
